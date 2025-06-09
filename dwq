@@ -1,1 +1,19 @@
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad
 
+nazwa_pliku = 'cw3.txt'
+nazwa_wyjscia = 'zaszyfrowane.aes'
+klucz = get_random_bytes(16)
+#Wczytanie zawartości pliku
+with open(nazwa_pliku, 'rb') as plik:
+    dane = plik.read()
+#Szyfrowanie
+szyfr = AES.new(klucz, AES.MODE_CBC)
+dane_z_paddingiem = pad(dane, AES.block_size)
+zaszyfrowane = szyfr.encrypt(dane_z_paddingiem)
+#Zapis zaszyfrowanych danych do pliku
+with open(nazwa_wyjscia, 'wb') as plik:
+    plik.write(szyfr.iv + zaszyfrowane)
+with open('klucz.bin', 'wb') as f:
+    f.write(klucz)
