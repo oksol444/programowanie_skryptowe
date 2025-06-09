@@ -1,0 +1,31 @@
+from Crypto.PublicKey import RSA
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
+
+#Tworzymy dwa klucze, prywatny i publiczny
+klucz = RSA.generate(2048)
+klucz_prywatny = klucz.export_key()
+klucz_publiczny = klucz.publickey().export_key()
+#Zapisujemy klucze do plików
+with open("klucz_prywatny.pem", "wb") as f:
+    f.write(klucz_prywatny)
+with open("klucz_publiczny.pem", "wb") as f:
+    f.write(klucz_publiczny)
+#Wczytujemy plik który chcemy podpisać
+with open("cw3.txt", "rb") as f:
+    dane = f.read()
+hasz = SHA256.new(dane)
+#Podpisujemy plik
+klucz_prywatny = RSA.import_key(open("klucz_prywatny.pem").read())
+podpis = pkcs1_15.new(klucz_prywatny).sign(hasz)
+with open("tekst.txt.podpis", "wb") as f:
+    f.write(podpis)
+print("Plik został podpisany.")
+#Weryfikujemy podpis
+klucz_publiczny = RSA.import_key(open("klucz_publiczny.pem").read())
+znowu_hasz = SHA256.new(dane)
+try:
+    pkcs1_15.new(klucz_publiczny).verify(znowu_hasz, podpis)
+    print("Podpis jest poprawny")
+except (ValueError, TypeError):
+    print("odpis jest niepoprawny")
