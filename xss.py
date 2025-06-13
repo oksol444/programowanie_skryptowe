@@ -6,6 +6,6 @@ for payload in payloads:
     response = requests.get(url, params=params)
 
     if payload in response.text:
-        print(f"[!] Znaleziono możliwą podatność XSS przy użyciu: {payload}")
+        print(f"podatność XSS przy użyciu: {payload}")
     else:
-        print(f"[-] Brak podatności dla: {payload}")
+        print(f"Brak podatności dla: {payload}")
